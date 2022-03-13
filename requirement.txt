@@ -1,0 +1,17 @@
+pytorch
+argparse
+random
+time
+pickle
+tqdm
+numpy
+json
+pandas
+seaborn
+matplotlib
+transformers
+flair
+scikit-learn
+gensim==4.1.2
+scipy
+os
