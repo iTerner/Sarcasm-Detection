@@ -24,12 +24,23 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.enabled = False
 torch.backends.cudnn.benchmark = False
 
+# load glove
 rep_model = downloader.load('glove-twitter-200')
-bla = Preprocessing.Preprocessing(
+# do the preprocessing
+p = Preprocessing.Preprocessing(
     path='Sarcasm_Headlines_Dataset_v2.json', rep_model=rep_model, attributes=['NN', 'JJ'])
 
 
 def train(model, iterator, optimizer, criterion, device):
+    """
+    Training loop function
+    Args:
+        param: model - the model we want to train
+        param: iterator - the data loader
+        param: optimizer - the optimizer
+        param: criterion - the loss function
+        param: device - the device we are working on
+    """
     epoch_loss = 0.0
     epoch_acc = 0.0
     model.train()
@@ -53,6 +64,14 @@ def train(model, iterator, optimizer, criterion, device):
 
 
 def evaluate(model, iterator, criterion, device):
+    """
+    Model evaluation function
+    Args:
+        param: model - the model we want to evaluate
+        param: iterator - the data loader
+        param: criterion - the loss function
+        param: device - the device we are working on
+    """
     epoch_loss = 0
     epoch_acc = 0
 
@@ -104,16 +123,17 @@ input_dim = 200
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
-
+# load the train and test sentences and labels
 train_sen_vec = load_file(f"{DATA_SAVE_PATH}train_sen_2_vec.pkl")
 train_sen_labels = load_file(f"{DATA_SAVE_PATH}train_sen_2_label.pkl")
 test_sen_vec = load_file(f"{DATA_SAVE_PATH}test_sen_2_vec.pkl")
 test_sen_labels = load_file(f"{DATA_SAVE_PATH}test_sen_2_label.pkl")
 
-
+# get the lengths of every sentence in the train and test set
 train_lengths = [len(val) for val in train_sen_vec.values()]
 test_lengths = [len(val) for val in test_sen_vec.values()]
 
+# pad the train and test data
 train_data, train_length = pad_sentences(train_sen_vec)
 test_data, test_length = pad_sentences(test_sen_vec)
 
@@ -122,23 +142,27 @@ test_data, test_length = pad_sentences(test_sen_vec)
 # save_file_pickle(test_data, f"{DATA_SAVE_PATH}test_sen_tensor.pkl")
 # save_file_pickle(test_length, f"{DATA_SAVE_PATH}data\\test_len_tensor.pkl")
 
+# create the pytorch dataset
 train_dataset = SarcasmDataset(list(train_data.values()), list(
     train_sen_labels.values()), list(train_length.values()))
 test_dataset = SarcasmDataset(list(test_data.values()), list(
     test_sen_labels.values()), list(test_length.values()))
 
+# create the train and test data loader
 train_dataloader = DataLoader(train_dataset, batch_size=bz, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=bz, shuffle=False)
 
+# create the model
 model = SarcasmDetectionModel(input_dim, hidden_dim, num_layers, dropout)
 print(model)
 
+# define the loss function and optimizer
 optimizer = optim.Adam(model.parameters(), lr=lr)
 criterion = nn.BCEWithLogitsLoss()
 model = model.to(device)
 criterion = criterion.to(device)
 
-
+# start the training loop
 print("start training on glove representation")
 train_losses, train_accs = [], []
 for epoch in range(num_epochs):
@@ -164,6 +188,7 @@ print(f"Test Loss: {test_loss:.3f} | Test Acc: {test_acc*100:.3f}%")
 #      os.path.join(PLOT_PATH))
 
 
+# load the projected data on the given part of speech (NN or JJ)
 print("testing projected vectors")
 projected_sen_vec = load_file(
     f"{DATA_SAVE_PATH}test_sen_2_vec_{ATTRIBUTE}.pkl")
@@ -181,7 +206,7 @@ projected_dataset = SarcasmDataset(list(projected_data.values()), list(
 projected_dataloader = DataLoader(
     projected_dataset, batch_size=bz, shuffle=False)
 
-
+# evaluate the trained model on the projected data
 print("evaluating the model on the projected representation")
 test_loss, test_acc = evaluate(
     model, projected_dataloader, criterion, device)

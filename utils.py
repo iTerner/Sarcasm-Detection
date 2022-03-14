@@ -15,7 +15,7 @@ torch.backends.cudnn.benchmark = False
 
 def binary_accuracy(preds, y):
     """
-    Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
+    Returns accuracy per batch.
     """
 
     # round predictions to the closest integer
@@ -49,6 +49,9 @@ def save_file_pickle(data: object, path: str):
 
 
 def get_max_sentence_length(d: dict) -> int:
+    """
+    The function returns the max length sentence
+    """
     max_len = 0
     for key, val in d.items():
         if len(val) > max_len:
@@ -57,6 +60,9 @@ def get_max_sentence_length(d: dict) -> int:
 
 
 def pad_sentences(d: dict) -> list:
+    """
+    The function pad the sentences with respect to the max length sentence.
+    """
     max_len = get_max_sentence_length(d)
     tensor_dict = {}
     len_dict = {}
@@ -73,6 +79,9 @@ def pad_sentences(d: dict) -> list:
 
 
 def plot(x, y, plot_type, save_path):
+    """
+    The function create a plot and saves it
+    """
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     path = os.path.join(save_path, f"train_{plot_type}.png")
