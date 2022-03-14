@@ -1,4 +1,4 @@
-# Behind the Scenes Of Sarcasm Detection Model
+# Behind the Scenes Of Sarcasm
 
 ## Table of contents
 
