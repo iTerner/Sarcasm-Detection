@@ -29,8 +29,8 @@ Sarcasm is a means of communication that involves a hidden insult. Often, unders
 | `models.py `                        | Python file consists of the implementation of the model.                                          |
 | `utils.py `                         | Python file consists helper functions.                                                            |
 | `helper_function.py`                | Python file consists of the helper functions for the prepossessing only.                          |
-| `figures `                          | Folder consists of all the images from the project.                                               |
 | `Sarcasm_Headlines_Dataset_v2.json` | The Sarcasm News Headlines Dataset.                                                               |
+| `figures `                          | Folder consists of all the images from the project.                                               |
 | `data`                              | Folder consists of all the data used in the projects.                                             |
 | `requirement.txt`                   | File containing all the packages we used in this project.                                         |
 
